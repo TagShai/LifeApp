@@ -57,7 +57,7 @@ public class Account extends Entity {
         }
     }
 
-    // TODO: 12.08.2017 equals(), hashcode()
+    // TODO: 28.08.2017 equals(), hashcode()
 
     @Override
     public String toString() {
