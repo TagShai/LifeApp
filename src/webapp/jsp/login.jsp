@@ -4,7 +4,7 @@
 
 <c:set var="contextPath" value="${pageContext.request.contextPath}"/>
 
-<fmt:setBundle basename="i18n.login.index_${locale}" />
+<fmt:setBundle basename="i18n.login_registration.index_${locale}" />
 <c:set var="locale"
 	value="${not empty param.locale ? param.locale : not empty locale ? locale : 'en'}"
 	scope="session" />
@@ -35,93 +35,227 @@
 </head>
 
 <body>
-
 	<div class="form">
 
-		<ul class="tab-group">
-			<li class="tab active"><a href="#signup">Sign Up</a></li>
-			<li class="tab"><a href="#login"><fmt:message key="login"/></a></li>
-		</ul>
+		<c:if test="${empty errorLoginPassMessage}">
+			<ul class="tab-group">
+				<li class="tab active"><a href="#signup">Sign Up</a></li>
+				<li class="tab"><a href="#login"><fmt:message key="login"/></a></li>
+			</ul>
 
-		<div class="tab-content">
-			<div id="signup">   
+			<div class="tab-content">
+				<div id="signup">   
 
-				<h1>Sign Up for Free</h1>
+					<h1>Sign Up for Free</h1>
+					<form name="signInForm" action="controller" method="post">
+						<input type="hidden" name="command" value="registration" />
+						<div class="top-row">
+							<div class="field-wrap">
+								<label>
+									First Name<span class="req">*</span>
+								</label>
+								<input type="text" required autofocus autocomplete="off" />
+							</div>
 
-				<form action="/" method="post">
-					<div class="top-row">
-						<div class="field-wrap">
-							<label>
-								First Name<span class="req">*</span>
-							</label>
-							<input type="text" required autofocus autocomplete="off" />
+							<div class="field-wrap">
+								<label>
+									Last Name<span class="req">*</span>
+								</label>
+								<input type="text" required autocomplete="off"/>
+							</div>
 						</div>
 
 						<div class="field-wrap">
 							<label>
-								Last Name<span class="req">*</span>
+								Username<span class="req">*</span>
 							</label>
-							<input type="text"required autocomplete="off"/>
+							<input type="text" name="username" id="username" required autocomplete="off"/>
 						</div>
+
+						<div class="field-wrap">
+							<label>
+								Set A Password<span class="req">*</span>
+							</label>
+							<input type="password" name="password" id="password" required autocomplete="off"/>
+						</div>
+
+						<div class="field-wrap">
+							<label>
+								Confirm Password<span class="req">*</span>
+							</label>
+							<input type="password" name="confirmPassword" id="confirmPassword" required autocomplete="off"/>
+						</div>
+
+						<c:if test="${not empty duplicateUserFormUsername}">
+							<div class="has-error has-error-text" style="font-size: 25px;"><fmt:message key="message.duplicate.userForm.username"/></div>
+						</c:if>
+						<c:if test="${not empty sizeUserFormUsername}">
+							<div class="has-error has-error-text" style="font-size: 25px;"><fmt:message key="message.size.userForm.username"/></div>
+						</c:if>
+						<c:if test="${not empty sizeUserFormPassword}">
+							<div class="has-error has-error-text" style="font-size: 25px;"><fmt:message key="message.size.userForm.password"/></div>
+						</c:if>
+						<c:if test="${not empty differentUserFormPassword}">
+							<div class="has-error has-error-text" style="font-size: 25px;"><fmt:message key="message.different.userForm.password"/></div>
+						</c:if>
+
+						<c:if test="${not empty successRegistration}">
+							<div class="success" style="font-size: 25px;"><fmt:message key="message.success.registration"/></div>
+	        	</c:if>
+
+						<button type="submit" class="button button-block">Get Started</button>
+					</form>
+					<div>
+						<form name ="languageForm" method="POST" action="controller">
+							<input type="hidden" name="command" value="RU" />
+							<button name="language" value="RU" type="submit" class="button button-language"><img src="${contextPath}/resources/img/internationalization/ru.png" class="img-language" alt="">Ru</button>
+
+							<input type="hidden" name="command" value="EN" />
+							<button name="language" value="EN" type="submit" class="button button-language"><img src="${contextPath}/resources/img/internationalization/en.png" class="img-language" alt="">En</button>
+						</form>
 					</div>
+				</div>
 
-					<div class="field-wrap">
-						<label>
-							Username<span class="req">*</span>
-						</label>
-						<input type="text" name="username" required autocomplete="off"/>
-					</div>
+				<div id="login">   
+					<h1>Welcome Back!</h1>
 
-					<div class="field-wrap">
-						<label>
-							Set A Password<span class="req">*</span>
-						</label>
-						<input type="password" name="password" required autocomplete="off"/>
-					</div>
+					<form name="loginForm" action="controller" method="post" >
+						<input type="hidden" name="command" value="login" /> 
+						<div class="field-wrap">
+							<label class="${errorLoginPassMessage != null ? 'has-error' : ''}">
+								Username<span class="req">*</span>
+							</label>
+							<input type="text" name="username" required autocomplete="off"/>
+						</div>
 
-					<button type="submit" class="button button-block">Get Started</button>
-				</form>
-				<div>
-					<form name ="languageForm" method="POST" action="controller">
-						<input type="hidden" name="command" value="RU" />
-						<button name="language" value="RU" type="submit" class="button button-language"><img src="${contextPath}/resources/img/internationalization/ru.png" class="img-language" alt="">Ru</button>
+						<div class="field-wrap">
+							<label class="${errorLoginPassMessage != null ? 'has-error' : ''}">
+								Password<span class="req">*</span>
+							</label>
+							<input type="password" name="password" required autocomplete="off"/>
+						</div>
 
-						<input type="hidden" name="command" value="EN" />
-						<button name="language" value="EN" type="submit" class="button button-language"><img src="${contextPath}/resources/img/internationalization/en.png" class="img-language" alt="">En</button>
+						<p class="forgot"><a href="#">Forgot Password?</a></p>
+
+						<span>${wrongAction} ${nullPage}</span>
+						<c:if test="${not empty errorLoginPassMessage}">
+							<div class="has-error has-error-text"><fmt:message key="message.loginerror"/></div>
+						</c:if>
+						<button type="submit" class="button button-block">Log In</button>
 					</form>
 				</div>
-			</div>
+			</div><!-- tab-content -->
+		</c:if>
 
-			<div id="login">   
-				<h1>Welcome Back!</h1>
+		<c:if test="${not empty errorLoginPassMessage}">
+			<ul class="tab-group">
+				<li class="tab"><a href="#signup">Sign Up</a></li>
+				<li class="tab active"><a href="#login"><fmt:message key="login"/></a></li>
+			</ul>
 
-				<form name="loginForm" action="controller" method="post" >
-					<input type="hidden" name="command" value="login" /> 
-					<div class="field-wrap">
-						<label class="${errorLoginPassMessage != null ? 'has-error' : ''}">
-							Username<span class="req">*</span>
-						</label>
-						<input type="text" name="username" required autocomplete="off"/>
+			<div class="tab-content">
+				<div id="login">   
+					<h1>Welcome Back!</h1>
+
+					<form name="loginForm" action="controller" method="post" >
+						<input type="hidden" name="command" value="login" /> 
+						<div class="field-wrap">
+							<label class="${errorLoginPassMessage != null ? 'has-error' : ''}">
+								Username<span class="req">*</span>
+							</label>
+							<input type="text" name="username" required autocomplete="off"/>
+						</div>
+
+						<div class="field-wrap">
+							<label class="${errorLoginPassMessage != null ? 'has-error' : ''}">
+								Password<span class="req">*</span>
+							</label>
+							<input type="password" name="password" required autocomplete="off"/>
+						</div>
+
+						<p class="forgot"><a href="#">Forgot Password?</a></p>
+
+						<span>${wrongAction} ${nullPage}</span>
+						<c:if test="${not empty errorLoginPassMessage}">
+							<div class="has-error has-error-text" style="font-size: 25px;"><fmt:message key="message.loginerror"/></div>
+						</c:if>
+						<button type="submit" class="button button-block">Log In</button>
+					</form>
+				</div>
+
+				<div id="signup">   
+
+					<h1>Sign Up for Free</h1>
+
+					<form name="signInForm" action="controller" method="post">
+						<div class="top-row">
+							<div class="field-wrap">
+								<label>
+									First Name<span class="req">*</span>
+								</label>
+								<input type="text" required autofocus autocomplete="off" />
+							</div>
+
+							<div class="field-wrap">
+								<label>
+									Last Name<span class="req">*</span>
+								</label>
+								<input type="text"required autocomplete="off"/>
+							</div>
+						</div>
+
+						<div class="field-wrap">
+							<label>
+								Username<span class="req">*</span>
+							</label>
+							<input type="text" name="username" id="username" required autocomplete="off"/>
+						</div>
+
+						<div class="field-wrap">
+							<label>
+								Set A Password<span class="req">*</span>
+							</label>
+							<input type="password" name="password" id="password" required autocomplete="off"/>
+						</div>
+
+						<div class="field-wrap">
+							<label>
+								Confirm Password<span class="req">*</span>
+							</label>
+							<input type="password" name="confirmPassword" id="confirmPassword" required autocomplete="off"/>
+						</div>
+
+						<c:if test="${not empty duplicateUserFormUsername}">
+							<div class="has-error has-error-text" style="font-size: 25px;"><fmt:message key="message.duplicate.userForm.username"/></div>
+						</c:if>
+						<c:if test="${not empty sizeUserFormUsername}">
+							<div class="has-error has-error-text" style="font-size: 25px;"><fmt:message key="message.size.userForm.username"/></div>
+						</c:if>
+						<c:if test="${not empty sizeUserFormPassword}">
+							<div class="has-error has-error-text" style="font-size: 25px;"><fmt:message key="message.size.userForm.password"/></div>
+						</c:if>
+						<c:if test="${not empty differentUserFormPassword}">
+							<div class="has-error has-error-text" style="font-size: 25px;"><fmt:message key="message.different.userForm.password"/></div>
+						</c:if>
+
+						<c:if test="${not empty successRegistration}">
+							<div class="success"><fmt:message key="message.success.registration"/></div>
+	        	</c:if>
+
+						<button type="submit" class="button button-block">Get Started</button>
+					</form>
+					<div>
+						<form name ="languageForm" method="POST" action="controller">
+							<input type="hidden" name="command" value="RU" />
+							<button name="language" value="RU" type="submit" class="button button-language"><img src="${contextPath}/resources/img/internationalization/ru.png" class="img-language" alt="">Ru</button>
+
+							<input type="hidden" name="command" value="EN" />
+							<button name="language" value="EN" type="submit" class="button button-language"><img src="${contextPath}/resources/img/internationalization/en.png" class="img-language" alt="">En</button>
+						</form>
 					</div>
-
-					<div class="field-wrap">
-						<label class="${errorLoginPassMessage != null ? 'has-error' : ''}">
-							Password<span class="req">*</span>
-						</label>
-						<input type="password" name="password" required autocomplete="off"/>
-					</div>
-
-					<p class="forgot"><a href="#">Forgot Password?</a></p>
-
-			    <span>${wrongAction} ${nullPage}</span>
-			   	<c:if test="${not empty errorLoginPassMessage}">
-			   		<div class="has-error has-error-text" style="font-size: 25px"><fmt:message key="message.loginerror"/></div>
-          </c:if>
-					<button type="submit" class="button button-block">Log In</button>
-				</form>
-			</div>
-		</div><!-- tab-content -->
-
+				</div>
+			</div><!-- tab-content -->
+		</c:if>
 	</div> <!-- /form -->
 
 	<script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>

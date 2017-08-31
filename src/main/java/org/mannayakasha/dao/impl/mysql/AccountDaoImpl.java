@@ -3,6 +3,7 @@ package org.mannayakasha.dao.impl.mysql;
 import org.mannayakasha.dao.BaseDao;
 import org.mannayakasha.dao.exception.DaoException;
 import org.mannayakasha.dao.interfaces.IAccountDao;
+import org.mannayakasha.model.AccessType;
 import org.mannayakasha.model.Account;
 
 import java.sql.PreparedStatement;
@@ -22,7 +23,7 @@ public class AccountDaoImpl extends BaseDao<Account> implements IAccountDao {
 
     // TODO: 28.08.2017 Add logger
 
-    @Override
+/*    @Override
     public List<Account> findAll() throws DaoException {
         String sql = "SELECT * FROM `accounts`";
 
@@ -41,9 +42,9 @@ public class AccountDaoImpl extends BaseDao<Account> implements IAccountDao {
             e.printStackTrace();
             throw new DaoException(e); // // TODO: 28.08.2017 Add logger
         }
-    }
+    }*/
 
-/*    @Override
+    @Override
     public List<Account> findAll() throws DaoException {
         String sql = "SELECT * FROM `accounts`";
 
@@ -74,7 +75,7 @@ public class AccountDaoImpl extends BaseDao<Account> implements IAccountDao {
             }
             connector.closeStatement(statement);
         }
-    }*/
+    }
 
     @Override
     public Account findByLoginAndPassword(String username, String password) throws DaoException {
@@ -115,26 +116,150 @@ public class AccountDaoImpl extends BaseDao<Account> implements IAccountDao {
 
     @Override
     public Account findByLogin(String username) throws DaoException {
-        return null;
+        String sql = "SELECT `id` FROM `accounts` WHERE `username` = ?";
+
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+            preparedStatement = connector.getPreparedStatement(sql);
+            preparedStatement.setString(1, username);
+            resultSet = preparedStatement.executeQuery();
+            Account account = null;
+            if(resultSet.next()) {
+                account = new Account();
+                account.setId(resultSet.getInt("id"));
+                account.setUsername(username);
+            }
+            return account;
+        } catch(SQLException e) {
+            throw new DaoException(e);
+        } finally {
+            try {
+                resultSet.close();
+            } catch(SQLException | NullPointerException e) {
+                // TODO: 31.08.2017 Empty catch
+            }
+            try {
+                connector.closePreparedStatement(preparedStatement);
+            } catch(NullPointerException e) {
+                // TODO: 31.08.2017 Empty catch
+            }
+        }
     }
 
     @Override
-    public Integer create(Account entity) throws DaoException {
-        return null;
+    public Integer create(Account account) throws DaoException {
+
+        String sql = "INSERT INTO `accounts` (`username`, `password`, `accessType`) VALUES(?, ?, ?)";
+
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+            preparedStatement = connector.getPreparedStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+            preparedStatement.setString(1, account.getUsername());
+            preparedStatement.setString(2, account.getPassword());
+            preparedStatement.setString(3, AccessType.USER.getAccess());
+            preparedStatement.execute();
+            resultSet = preparedStatement.getGeneratedKeys();
+            resultSet.next();
+
+            return resultSet.getInt(1);
+        } catch (SQLException e) {
+            throw new DaoException(e);
+        } finally {
+            try {
+                resultSet.close();
+            } catch (SQLException | NullPointerException e) {
+                // TODO: 31.08.2017 Empty catch
+            }
+            try {
+                connector.closePreparedStatement(preparedStatement);
+            } catch (NullPointerException e) {
+                // TODO: 31.08.2017 Empty catch
+            }
+        }
     }
 
     @Override
     public void delete(int id) throws DaoException {
 
+        String sql = "DELETE FROM `accounts` WHERE `id` = ?";
+
+        PreparedStatement preparedStatement = null;
+
+        try {
+            preparedStatement = connector.getPreparedStatement(sql);
+            preparedStatement.setInt(1, id);
+            preparedStatement.execute();
+        } catch (SQLException e) {
+            throw new DaoException(e);
+        } finally {
+            try {
+                connector.closePreparedStatement(preparedStatement);
+            } catch (NullPointerException e) {
+                // TODO: 31.08.2017 Empty catch
+            }
+        }
     }
 
     @Override
-    public void update(Account entity) throws DaoException {
+    public void update(Account account) throws DaoException {
 
+        String sql = "UPDATE `accounts` SET `username` = ?, `password` = ? WHERE `id` = ?";
+        PreparedStatement preparedStatement = null;
+
+        try {
+            preparedStatement = connector.getPreparedStatement(sql);
+            preparedStatement.setString(1, account.getUsername());
+            preparedStatement.setString(2, account.getPassword());
+            preparedStatement.setInt(3, account.getId());
+            preparedStatement.execute();
+        } catch (SQLException e) {
+            throw new DaoException(e);
+        } finally {
+            try {
+                connector.closePreparedStatement(preparedStatement);
+            } catch (NullPointerException e) {
+                // TODO: 31.08.2017 Empty catch
+            }
+        }
     }
 
     @Override
     public Account findById(int id) throws DaoException {
-        return null;
+
+        String sql = "SELECT `username`, `password` FROM `accounts` WHERE `id` = ?";
+
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+            preparedStatement = connector.getPreparedStatement(sql);
+            preparedStatement.setInt(1, id);
+            resultSet = preparedStatement.executeQuery();
+            Account account = null;
+            if (resultSet.next()) {
+                account = new Account();
+                account.setId(id);
+                account.setUsername(resultSet.getString("username"));
+                account.setPassword(resultSet.getString("password"));
+            }
+            return account;
+        } catch (SQLException e) {
+            throw new DaoException(e);
+        } finally {
+            try {
+                resultSet.close();
+            } catch (SQLException | NullPointerException e) {
+                // TODO: 31.08.2017 Empty catch
+            }
+            try {
+                connector.closePreparedStatement(preparedStatement);
+            } catch (NullPointerException e) {
+                // TODO: 31.08.2017 Empty catch
+            }
+        }
     }
 }

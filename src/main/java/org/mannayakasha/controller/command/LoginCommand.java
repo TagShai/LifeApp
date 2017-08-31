@@ -5,14 +5,13 @@ import org.mannayakasha.dao.impl.mysql.MySQLDaoFactoryImpl;
 import org.mannayakasha.model.AccessType;
 import org.mannayakasha.model.Account;
 import org.mannayakasha.resource.ConfigurationManager;
-import org.mannayakasha.resource.LoginMessageManager;
+import org.mannayakasha.resource.LoginRegistrationMessageManager;
 import org.mannayakasha.service.exception.ServiceException;
 import org.mannayakasha.service.impl.ServiceFactoryImpl;
 import org.mannayakasha.service.interfaces.IAccountService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.Locale;
 
 /**
  * Login user into the system.
@@ -60,7 +59,7 @@ public class LoginCommand extends ActionCommand {
             }
             page = ConfigurationManager.getProperty("path.page.main");
         } else {
-            request.setAttribute("errorLoginPassMessage", LoginMessageManager.getProperty("message.loginerror"));
+            request.setAttribute("errorLoginPassMessage", LoginRegistrationMessageManager.getProperty("message.loginerror"));
             page = ConfigurationManager.getProperty("path.page.login");
         }
 

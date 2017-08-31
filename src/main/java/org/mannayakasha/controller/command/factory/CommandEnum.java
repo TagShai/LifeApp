@@ -1,9 +1,6 @@
 package org.mannayakasha.controller.command.factory;
 
-import org.mannayakasha.controller.command.ActionCommand;
-import org.mannayakasha.controller.command.LanguageCommand;
-import org.mannayakasha.controller.command.LoginCommand;
-import org.mannayakasha.controller.command.LogoutCommand;
+import org.mannayakasha.controller.command.*;
 
 /**
  * Enum, that contains all commands.
@@ -20,6 +17,8 @@ public enum CommandEnum {
         this.command = new LanguageCommand();
     }}, EN {{
         this.command = new LanguageCommand();
+    }}, REGISTRATION {{
+        this.command = new RegistrationCommand();
     }};
 
     ActionCommand command;

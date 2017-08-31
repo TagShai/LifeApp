@@ -8,10 +8,10 @@ import java.util.ResourceBundle;
  * @author Pavel
  * @version 1.0 29.08.2017.
  */
-public class LoginMessageManager {
-    private final static ResourceBundle resourceBundle = ResourceBundle.getBundle("i18n.login.index");
+public class LoginRegistrationMessageManager {
+    private final static ResourceBundle resourceBundle = ResourceBundle.getBundle("i18n.login_registration.index");
 
-    private LoginMessageManager() {
+    private LoginRegistrationMessageManager() {
     }
 
     public static String getProperty(String key) {

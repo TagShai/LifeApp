@@ -17,7 +17,7 @@ public interface IAccountService extends IService {
 
     Account findByLoginAndPassword(String login, String password) throws ServiceException;
 
-    Account findByLogin(String login) throws ServiceException;
+    Account findByLogin(String username) throws ServiceException;
 
     Account findById(Integer id) throws ServiceException;
 

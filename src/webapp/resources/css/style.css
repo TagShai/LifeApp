@@ -186,6 +186,11 @@ textarea {
   text-align: center;
 }
 
+.success {
+  color: #98FB98;
+  text-align: center;
+}
+
 .img-language {
   width: 32px;
 }
